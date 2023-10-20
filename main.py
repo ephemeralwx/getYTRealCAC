@@ -59,4 +59,4 @@ def fetch_transcript(youtube_url):
     return transcript_text
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
