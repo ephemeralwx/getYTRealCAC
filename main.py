@@ -68,8 +68,15 @@ def call_openai_api(prompt, max_tokens):
         "max_tokens": max_tokens
     }
     response = requests.post(OPENAI_ENDPOINT, headers=HEADERS, json=data)
-    response.raise_for_status()  # Will raise an HTTPError if the HTTP request returned an unsuccessful status code
+    
+    # Check if the response was successful
+    if response.status_code != 200:
+        # Extract error message from the OpenAI API response
+        error_message = response.json().get('error', {}).get('message', 'Unknown error')
+        raise Exception(f"OpenAI API error: {error_message}")
+
     return response.json()["choices"][0]["text"]
+
 
 if __name__ == '__main__':
     app.run(debug=True)
