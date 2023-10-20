@@ -8,9 +8,9 @@ app = Flask(__name__)
 # Fetch the OpenAI API key from an environment variable
 openai.api_key = os.environ.get('OPENAI_API_KEY')
 
-@app.route('/get_summary', methods=['POST'])
+@app.route('/get_summary', methods=['GET'])
 def get_summary_from_youtube_url():
-    youtube_url = request.json.get('youtube_url')
+    youtube_url = request.args.get('youtube_url')
     if not youtube_url:
         return jsonify({'error': 'youtube_url is required'}), 400
 
@@ -26,9 +26,9 @@ def get_summary_from_youtube_url():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/get_howto_guide', methods=['POST'])
+@app.route('/get_howto_guide', methods=['GET'])
 def get_howto_guide():
-    youtube_url = request.json.get('youtube_url')
+    youtube_url = request.args.get('youtube_url')
     if not youtube_url:
         return jsonify({'error': 'youtube_url is required'}), 400
 
@@ -48,10 +48,15 @@ def fetch_transcript(youtube_url):
     video_id = youtube_url.split('v=')[-1].split('&')[0]
     transcript = YouTubeTranscriptApi.get_transcript(video_id)
     transcript_text = ' '.join([entry['text'] for entry in transcript])
+    
+    # Limiting the transcript to 10240 characters
+    if len(transcript_text) > 10240:
+        transcript_text = transcript_text[:10240]
+
+    # Check if the combined prompt exceeds ChatGPT's input limit
     if len(transcript_text) > 2048:
         raise ValueError('The transcript is too long for ChatGPT to handle.')
     return transcript_text
 
-#hi
 if __name__ == '__main__':
     app.run(debug=False)
