@@ -14,6 +14,18 @@ HEADERS = {
     "User-Agent": "OpenAI-Flask-App"
 }
 
+@app.route('/get_transcript', methods=['GET'])
+def get_transcript():
+    youtube_url = request.args.get('youtube_url')
+    if not youtube_url:
+        return jsonify({'error': 'youtube_url is required'}), 400
+
+    try:
+        transcript_text = fetch_transcript(youtube_url)
+        return jsonify({'transcript': transcript_text})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/get_summary', methods=['GET'])
 def get_summary_from_youtube_url():
     youtube_url = request.args.get('youtube_url')
@@ -25,7 +37,6 @@ def get_summary_from_youtube_url():
         prompt_text = transcript_text + "\n\nGenerate a summary for the text displayed above."
         response = call_openai_api(prompt_text, max_tokens=150)
         return jsonify({'summary': response.strip()})
-
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -40,7 +51,6 @@ def get_howto_guide():
         prompt_text = transcript_text + "\n\nGenerate a friendly How-To step-by-step guide based on the text displayed above. Make sure to number the steps."
         response = call_openai_api(prompt_text, max_tokens=300)
         return jsonify({'howto_guide': response.strip()})
-
     except Exception as e:
         return jsonify({'error': str(e)})
 
@@ -62,4 +72,4 @@ def call_openai_api(prompt, max_tokens):
     return response.json()["choices"][0]["text"]
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
