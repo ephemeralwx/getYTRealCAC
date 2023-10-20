@@ -52,6 +52,6 @@ def fetch_transcript(youtube_url):
         raise ValueError('The transcript is too long for ChatGPT to handle.')
     return transcript_text
 
-
+#hi
 if __name__ == '__main__':
     app.run(debug=False)
