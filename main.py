@@ -58,15 +58,24 @@ def fetch_transcript(youtube_url):
     return transcript_text[:10240]
 
 def call_openai_api(prompt, max_tokens):
-    response = openai.Completion.create(  # Use openai.Completion.create
-        engine="gpt-3.5-turbo",  # Use davinci-003 for gpt-3.5-turbo
-        prompt=prompt,
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a helpful assistant."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
         max_tokens=max_tokens
     )
 
     # Check if the response was successful
     if response['choices']:  # Check if choices are in the response
-        return response['choices'][0]['text'].strip()  # Extract and return the generated text
+        return response['choices'][0]['message']['content'].strip()  # Extract and return the generated text
     else:
         raise Exception("OpenAI API error: {}".format(response['error']['message']))  # Handle any errors
 
