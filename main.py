@@ -1,18 +1,12 @@
 from flask import Flask, request, jsonify
 from youtube_transcript_api import YouTubeTranscriptApi
 import os
-import requests
+import openai  # Import the openai library instead of requests
 
 app = Flask(__name__)
 
 # Constants
-OPENAI_ENDPOINT = "https://api.openai.com/v1/engines/davinci/completions"
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-HEADERS = {
-    "Authorization": f"Bearer {OPENAI_API_KEY}",
-    "Content-Type": "application/json",
-    "User-Agent": "OpenAI-Flask-App"
-}
 
 @app.route('/get_transcript', methods=['GET'])
 def get_transcript():
@@ -63,20 +57,18 @@ def fetch_transcript(youtube_url):
     return transcript_text[:10240]
 
 def call_openai_api(prompt, max_tokens):
-    data = {
-        "prompt": prompt,
-        "max_tokens": max_tokens
-    }
-    response = requests.post(OPENAI_ENDPOINT, headers=HEADERS, json=data)
-    
+    openai.api_key = OPENAI_API_KEY  # Set the API key
+    response = openai.Completion.create(  # Use openai.Completion.create instead of requests.post
+        engine="gpt-4",  # Update the engine to gpt-4
+        prompt=prompt,
+        max_tokens=max_tokens
+    )
+
     # Check if the response was successful
-    if response.status_code != 200:
-        # Extract error message from the OpenAI API response
-        error_message = response.json().get('error', {}).get('message', 'Unknown error')
-        raise Exception(f"OpenAI API error: {error_message}")
-
-    return response.json()["choices"][0]["text"]
-
+    if response['choices']:  # Check if choices are in the response
+        return response['choices'][0]['text'].strip()  # Extract and return the generated text
+    else:
+        raise Exception("OpenAI API error: {}".format(response['error']['message']))  # Handle any errors
 
 if __name__ == '__main__':
     app.run(debug=True)
