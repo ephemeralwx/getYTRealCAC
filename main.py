@@ -29,8 +29,8 @@ def get_summary_from_youtube_url():
 
     try:
         transcript_text = fetch_transcript(youtube_url)
-        prompt_text = transcript_text + "\n\nGenerate a summary for the text displayed above."
-        response = call_openai_api(prompt_text, max_tokens=150)
+        prompt_text = transcript_text + "\n\nGenerate a summary for the text displayed above in less than 1350 characters."
+        response = call_openai_api(prompt_text, max_tokens=300)
         return jsonify({'summary': response.strip()})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -43,11 +43,27 @@ def get_howto_guide():
 
     try:
         transcript_text = fetch_transcript(youtube_url)
-        prompt_text = transcript_text + "\n\nGenerate a friendly How-To step-by-step guide based on the text displayed above. Make sure to number the steps."
+        prompt_text = transcript_text + "\n\nGenerate a friendly How-To step-by-step guide based on the text displayed above in less than 1350 characters. Make sure to number the steps."
         response = call_openai_api(prompt_text, max_tokens=300)
         return jsonify({'howto_guide': response.strip()})
     except Exception as e:
         return jsonify({'error': str(e)})
+
+@app.route('/ask_question', methods=['GET'])
+def ask_question():
+    youtube_url = request.args.get('youtube_url')
+    question = request.args.get('question')
+
+    if not youtube_url or not question:
+        return jsonify({'error': 'Both youtube_url and question parameters are required'}), 400
+
+    try:
+        transcript_text = fetch_transcript(youtube_url)  # Fetch the transcript from the YouTube URL
+        prompt = f"Given the following text: {transcript_text}, answer this question: {question}"
+        response = call_openai_api(prompt, max_tokens=350)  # Adjust max_tokens as needed
+        return jsonify({'answer': response.strip()})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 def fetch_transcript(youtube_url):
     video_id = youtube_url.split('v=')[-1].split('&')[0]
