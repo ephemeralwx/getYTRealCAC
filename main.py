@@ -1,12 +1,13 @@
 from flask import Flask, request, jsonify
 from youtube_transcript_api import YouTubeTranscriptApi
 import os
-import openai  # Import the openai library instead of requests
+import openai  # Import the openai library
 
 app = Flask(__name__)
 
 # Constants
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+openai.api_key = OPENAI_API_KEY  # Set the API key
 
 @app.route('/get_transcript', methods=['GET'])
 def get_transcript():
@@ -57,9 +58,8 @@ def fetch_transcript(youtube_url):
     return transcript_text[:10240]
 
 def call_openai_api(prompt, max_tokens):
-    openai.api_key = OPENAI_API_KEY  # Set the API key
-    response = openai.Completion.create(  # Use openai.Completion.create instead of requests.post
-        engine="gpt-4",  # Update the engine to gpt-4
+    response = openai.Completion.create(  # Use openai.Completion.create
+        engine="davinci-003",  # Use davinci-003 for gpt-3.5-turbo
         prompt=prompt,
         max_tokens=max_tokens
     )
