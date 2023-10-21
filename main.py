@@ -59,7 +59,7 @@ def fetch_transcript(youtube_url):
 
 def call_openai_api(prompt, max_tokens):
     response = openai.Completion.create(  # Use openai.Completion.create
-        engine="davinci-003",  # Use davinci-003 for gpt-3.5-turbo
+        engine="gpt-3.5-turbo",  # Use davinci-003 for gpt-3.5-turbo
         prompt=prompt,
         max_tokens=max_tokens
     )
