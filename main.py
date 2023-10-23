@@ -195,8 +195,7 @@ def youtube_summary():
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {e}'}), 500
 
-if __name__ == '__main__':
-    app.run(debug=False)
+
 
 
 if __name__ == '__main__':
