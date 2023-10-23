@@ -106,7 +106,7 @@ def get_top_3_videos(api_key, query, recency_year, n=3):
     youtube = build('youtube', 'v3', developerKey=api_key)
 
     current_year = datetime.now().year
-    cutoff_year = current_year - recency_year
+    cutoff_year = current_year - int(recency_year)
 
     search_response = youtube.search().list(
         q=query,
