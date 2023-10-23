@@ -55,10 +55,11 @@ def get_howto_guide():
     except Exception as e:
         return jsonify({'error': str(e)})
 
-@app.route('/ask_question', methods=['GET'])
+@app.route('/ask_question', methods=['POST']) #Is post request
 def ask_question():
-    youtube_url = request.args.get('youtube_url')
-    question = request.args.get('question')
+    data = request.get_json()  # New line to get data from JSON body
+    youtube_url = data.get('youtube_url')  # Change from request.args.get to data.get
+    question = data.get('question')  # Change from request.args.get to data.get
 
     if not youtube_url or not question:
         return jsonify({'error': 'Both youtube_url and question parameters are required'}), 400
