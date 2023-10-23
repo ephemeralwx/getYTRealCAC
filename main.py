@@ -152,12 +152,14 @@ def get_top_3_videos(api_key, query, recency_year, n=3):
 
     top_videos = sorted(video_candidates, key=lambda x: x['score'], reverse=True)[:3]
     return top_videos
-'''
+
 @app.route('/youtube_summary', methods=['POST'])
 def youtube_summary():
-    data = request.get_json()
+    data = request.get_json()  # Get data from JSON body of request
+
+    # Extract values from the data, with default values if keys are not present
     prompt = data.get('prompt')
-    recency = data.get('recency', 2)
+    recency = data.get('recency', 2)  # Default to 2 years if recency is not provided
 
     if not prompt:
         return jsonify({'error': 'Prompt parameter is required'}), 400
@@ -167,6 +169,7 @@ def youtube_summary():
         return jsonify({'videos': videos})
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {e}'}), 500
+
 '''
 @app.route('/youtube_summary', methods=['GET'])
 def youtube_summary():
@@ -181,7 +184,7 @@ def youtube_summary():
         return jsonify({'videos': videos})
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {e}'}), 500
-
+'''
 
 
 
