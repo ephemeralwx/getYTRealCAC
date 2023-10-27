@@ -134,11 +134,20 @@ def get_top_3_videos(api_key, query, recency_year, n=3):
 
             if timedelta(minutes=1) < duration < timedelta(hours=1):
                 likes = int(video['statistics'].get('likeCount', 0))
-                dislikes = int(video['statistics'].get('dislikeCount', 0))
                 views = int(video['statistics']['viewCount'])
-                ratio = likes / (likes + dislikes) if (likes + dislikes) > 0 else 0
+                comment_count = int(video['statistics'].get('commentCount', 0))
+                channel_id = video['snippet']['channelId']
                 
-                score = views * (ratio ** n)
+                channel_response = youtube.channels().list(
+                    id=channel_id,
+                    part="statistics"
+                ).execute()
+                
+                subscriber_count = int(channel_response['items'][0]['statistics'].get('subscriberCount', 0))
+                
+                # New scoring algorithm:
+                # This is a simplistic scoring algorithm, you may need to fine-tune the weights and formula to get desirable results.
+                score = (views * 0.5) + (likes * 0.3) + (comment_count * 0.1) + (subscriber_count * 0.1)
 
                 video_candidates.append({
                     'score': score,
@@ -148,11 +157,13 @@ def get_top_3_videos(api_key, query, recency_year, n=3):
                     'channel_title': video['snippet']['channelTitle'],
                     'view_count': views,
                     'like_count': likes,
-                    'dislike_count': dislikes
+                    'comment_count': comment_count,
+                    'subscriber_count': subscriber_count
                 })
 
     top_videos = sorted(video_candidates, key=lambda x: x['score'], reverse=True)[:3]
     return top_videos
+
 
 @app.route('/youtube_summary', methods=['POST'])
 def youtube_summary():
