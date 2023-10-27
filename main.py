@@ -159,7 +159,7 @@ def youtube_summary():
 
     # Extract values from the data, with default values if keys are not present
     prompt = data.get('prompt')
-    recency = data.get('recency', 2)  # Default to 2 years if recency is not provided
+    recency = int(data.get('recency', 2))  # Default to 2 years if recency is not provided
 
     if not prompt:
         return jsonify({'error': 'Prompt parameter is required'}), 400
@@ -171,10 +171,10 @@ def youtube_summary():
         return jsonify({'error': f'Unexpected error: {e}'}), 500
 
 
-@app.route('/youtube_summary', methods=['GET'])
-def youtube_summary():
+@app.route('/youtube_summaryGET', methods=['GET'])
+def youtube_summaryGET():
     prompt = request.args.get('prompt')
-    recency = request.args.get('recency', 2)  # default to 2 years if recency is not provided
+    recency = int(request.args.get('recency', 2))  # default to 2 years if recency is not provided
 
     if not prompt:
         return jsonify({'error': 'Prompt parameter is required'}), 400
