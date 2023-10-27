@@ -170,7 +170,7 @@ def youtube_summary():
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {e}'}), 500
 
-'''
+
 @app.route('/youtube_summary', methods=['GET'])
 def youtube_summary():
     prompt = request.args.get('prompt')
@@ -184,7 +184,7 @@ def youtube_summary():
         return jsonify({'videos': videos})
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {e}'}), 500
-'''
+
 
 
 
