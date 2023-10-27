@@ -198,7 +198,19 @@ def youtube_summaryGET():
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {e}'}), 500
 
+@app.route('/youtube_summaryGETFILTER', methods=['GET'])
+def youtube_summaryGETFILTER():
+    prompt = request.args.get('prompt')
+    recency = int(request.args.get('recency', 3))  # default to 2 years if recency is not provided
 
+    if not prompt:
+        return jsonify({'error': 'Prompt parameter is required'}), 400
+
+    try:
+        videos = get_top_3_videos(YOUTUBE_API_KEY, prompt, recency)
+        return jsonify({'videos': videos})
+    except Exception as e:
+        return jsonify({'error': f'Unexpected error: {e}'}), 500
 
 
 if __name__ == '__main__':
