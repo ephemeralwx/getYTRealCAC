@@ -180,12 +180,23 @@ def youtube_summaryGET():
         return jsonify({'error': 'Prompt parameter is required'}), 400
 
     try:
-        videos = get_top_3_videos(YOUTUBE_API_KEY, prompt, recency)
+        youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+        search_response = youtube.search().list(
+            q=prompt,
+            type="video",
+            order="viewCount",
+            part="id,snippet",
+            maxResults=10
+        ).execute()
+
+        videos = [{
+            'title': item['snippet']['title'],
+            'link': f"https://www.youtube.com/watch?v={item['id']['videoId']}"
+        } for item in search_response['items']]
+
         return jsonify({'videos': videos})
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {e}'}), 500
-
-
 
 
 
