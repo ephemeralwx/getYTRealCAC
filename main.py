@@ -13,7 +13,7 @@ app = Flask(__name__)
 # Constants
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 openai.api_key = OPENAI_API_KEY  # Set the API key
-YOUTUBE_API_KEY = 'AIzaSyBIB84RbnY_3RkmEgTlilt--dx4_MPW40A'
+YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
 
 
 @app.route('/get_transcript', methods=['GET'])
