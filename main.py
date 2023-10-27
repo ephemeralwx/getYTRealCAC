@@ -113,7 +113,8 @@ def get_top_3_videos(api_key, query, recency_year, n=3):
         type="video",
         order="viewCount",
         part="id,snippet",
-        maxResults=10
+        videoDuration="medium",
+        maxResults=20
     ).execute()
 
     video_candidates = []
