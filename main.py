@@ -174,7 +174,7 @@ def youtube_summary():
 @app.route('/youtube_summaryGET', methods=['GET'])
 def youtube_summaryGET():
     prompt = request.args.get('prompt')
-    recency = int(request.args.get('recency', 2))  # default to 2 years if recency is not provided
+    recency = int(request.args.get('recency', 3))  # default to 2 years if recency is not provided
 
     if not prompt:
         return jsonify({'error': 'Prompt parameter is required'}), 400
